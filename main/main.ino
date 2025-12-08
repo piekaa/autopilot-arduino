@@ -55,6 +55,7 @@ void setup() {
   initMotorDriver();
   delay(1000);
   lastMillis = millis();
+  setupCustomSerial();
 }
 
 
