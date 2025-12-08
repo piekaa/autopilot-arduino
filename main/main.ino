@@ -4,6 +4,7 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include "HapticKnob.h"
+#include "KnobManager.h"
 
 BLDCMotor motor = BLDCMotor(7);
 BLDCDriver6PWM driver = BLDCDriver6PWM(16, 17, 18, 23, 19, 33);
@@ -32,10 +33,13 @@ GenericSensor sensor = GenericSensor(readSensorAngle, initSensor);
 
 long lastMillis;
 
-HapticKnob knobVerticalSpeed = HapticKnob("VS", motor, 1, 1, 100);
-HapticKnob knobHeading = HapticKnob("H", motor, 0.3, 0.3, 50);
-HapticKnob knobAltitude = HapticKnob("A", motor, 0.3, 0.3, 50);
-HapticKnob knobSpeed = HapticKnob("S", motor, 0.3, 0.3, 50);
+HapticKnob knobVerticalSpeed = HapticKnob("VS", motor, 1, 1);
+HapticKnob knobHeading = HapticKnob("H", motor, 0.3, 0.3);
+HapticKnob knobAltitude = HapticKnob("A", motor, 0.3, 0.3);
+HapticKnob knobSpeed = HapticKnob("S", motor, 0.3, 0.3);
+
+// Knob manager with buttons on pins 13 (next) and 14 (previous)
+KnobManager knobManager(knobVerticalSpeed, knobHeading, knobAltitude, knobSpeed, 13, 14);
 
 void setup() {
   Serial.begin(115200);
@@ -57,11 +61,11 @@ void setup() {
 // ===== ARDUINO LOOP =====
 
 void loop() {
-  motor.loopFOC();
-
   // Handle serial commands
   handleSerialCommands();
 
-  knob.move();
-
+// Check button presses and switch knobs
+  knobManager.update();
+  // Move the currently active knob
+  knobManager.getCurrentKnob().move();
 }

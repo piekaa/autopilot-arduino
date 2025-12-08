@@ -7,38 +7,37 @@ class HapticKnob {
 private:
   BLDCMotor& motor;
   float halfStep;
-  String name;
-  float targetAngle = 3;
+  inline static float targetAngle = 3;  // inline static allows initialization here
 
 public:
   float maxVoltage;
   float step;
-  int value;
+  String name;
 
   // Constructor - implementation right here in the .h file!
-  HapticKnob(String name, BLDCMotor& motorRef, float maxVolt, float stepSize, int val)
+  HapticKnob(String name, BLDCMotor& motorRef, float maxVolt, float stepSize)
     : motor(motorRef) {  // Initialize reference in initializer list
     this->name = name;
     this->maxVoltage = maxVolt;
     this->step = stepSize;
     this->halfStep = stepSize / 2;
-    this->value = val;
   }
 
   // move() method - also right here!
   void move() {
+    motor.loopFOC();
+
     float angle = motor.shaft_angle;
 
     if(abs(targetAngle - angle) > halfStep) {
+      Serial.println(name);
       if(targetAngle - angle < 0) {
         targetAngle += step;
-        value--;
+        Serial.println("-");
       } else {
         targetAngle -= step;
-        value++;
+        Serial.println("+");
       }
-      Serial.println(name);
-      Serial.println(value);
     }
 
     float distance = targetAngle - angle;
