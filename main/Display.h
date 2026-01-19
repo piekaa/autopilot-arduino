@@ -13,6 +13,9 @@ public:
     this->ic2Multiplexer = ic2Multiplexer;
     this->channel = channel;
     this->oledDisplay = new Adafruit_SSD1306(128, 64, &Wire1, -1);
+
+    ic2Multiplexer->selectChannel(channel);
+    oledDisplay->begin(SSD1306_SWITCHCAPVCC, 0x3C);
   }
 
   void showText(String text) {
@@ -25,7 +28,7 @@ public:
 
     // Note: Adafruit library uses print()
     oledDisplay->println(text);
-  
+
     oledDisplay->display(); // Show the content
   }
 };

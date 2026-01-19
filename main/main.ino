@@ -45,7 +45,7 @@ void setup() {
   // delay(1000);
   // // Initialize I2C with ESP32 pins (SDA=21, SCL=22)
   // Wire.begin(21, 22);
-  
+
   // delay(100);  // Give I2C time to initialize
   // showOnDisplays();
   // Serial.println("Haptic Detent Knob Starting...");
@@ -58,9 +58,15 @@ void setup() {
   // setupCustomSerial();
 
   IC2Multiplexer ic2Multiplexer = IC2Multiplexer();
-  Display display = Display(&ic2Multiplexer, 0);
+  Display display1 = Display(&ic2Multiplexer, 0);
+  Display display2 = Display(&ic2Multiplexer, 7);
+  Display display3 = Display(&ic2Multiplexer, 6);
+  Display display4 = Display(&ic2Multiplexer, 5);
 
-  display.showText("Display 1");
+  display1.showText("Display 1");
+  display2.showText("Display 2");
+  display3.showText("Display 3");
+  display4.showText("Display 4");
 
 }
 
