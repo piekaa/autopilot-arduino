@@ -2,21 +2,21 @@
 #define HAPTIC_KNOB_H
 
 #include <SimpleFOC.h>
+#include <MotorDriver.h>
 
 class HapticKnob {
 private:
-  BLDCMotor& motor;
+  MotorDriver* motorDriver;
+  float maxVoltage;
+  float step;
+  String name;
   float halfStep;
   inline static float targetAngle = 3;  // inline static allows initialization here
 
 public:
-  float maxVoltage;
-  float step;
-  String name;
-
-  // Constructor - implementation right here in the .h file!
-  HapticKnob(String name, BLDCMotor& motorRef, float maxVolt, float stepSize)
-    : motor(motorRef) {  // Initialize reference in initializer list
+  
+  HapticKnob(String name, MotorDriver* motorDriver, float maxVolt, float stepSize) {
+    this->motorDriver = motorDriver;
     this->name = name;
     this->maxVoltage = maxVolt;
     this->step = stepSize;
@@ -25,9 +25,9 @@ public:
 
   // move() method - also right here!
   void move() {
-    motor.loopFOC();
+    motorDriver->loopFOC();
 
-    float angle = motor.shaft_angle;
+    float angle = motorDriver->shaftAngle();
 
     if(abs(targetAngle - angle) > halfStep) {
       Serial.println(name);
@@ -60,7 +60,11 @@ public:
     float targetVoltage = maxVoltage * relativeDistance;
 
     // Apply voltage (SimpleFOC will handle limiting via motor.voltage_limit)
-    motor.move(targetVoltage);
+    motorDriver->move(targetVoltage);
+  }
+
+  String getName() {
+    return name;
   }
 };
 

@@ -32,7 +32,6 @@ class SerialCommands {
 
 public:
   SerialCommands(AutopilotDisplays* displays) {
-    Serial.begin(115200);
     this->displays = displays;
     xTaskCreatePinnedToCore(
       commandsTaskEntry,

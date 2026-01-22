@@ -22,6 +22,19 @@ class AutopilotDisplays {
     self->displayLoop();
   }
 
+   void displayLoop() {
+    DisplayMsg msg{};
+
+      for(;;) {
+        if( xQueueReceive(displayQueue, &msg, portMAX_DELAY) == pdPASS) {
+          heading->showText(String(msg.heading));
+          speed->showText(String(msg.speed));
+          altitude->showText(String(msg.altitude));
+          verticalSpeed->showText(String(msg.verticalSpeed));
+        }
+      }
+  }
+
 public:
   AutopilotDisplays(IC2Multiplexer* ic2Multiplexer) {
     this->ic2Multiplexer = ic2Multiplexer;
@@ -42,19 +55,6 @@ public:
     NULL, 
     0                        
   );
-  }
-
-  void displayLoop() {
-    DisplayMsg msg{};
-
-      for(;;) {
-        if( xQueueReceive(displayQueue, &msg, portMAX_DELAY) == pdPASS) {
-          heading->showText(String(msg.heading));
-          speed->showText(String(msg.speed));
-          altitude->showText(String(msg.altitude));
-          verticalSpeed->showText(String(msg.verticalSpeed));
-        }
-      }
   }
 
   void showValues(int heading, int speed, int altitude, int verticalSpeed) {
