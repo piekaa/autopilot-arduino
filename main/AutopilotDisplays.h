@@ -3,6 +3,10 @@
 
 #include "Display.h"
 
+struct DisplayMsg {
+  int heading, speed, altitude, verticalSpeed;
+};
+
 class AutopilotDisplays {
   IC2Multiplexer* ic2Multiplexer;
 
@@ -10,6 +14,8 @@ class AutopilotDisplays {
    Display* speed;
    Display* altitude;
    Display* verticalSpeed;
+
+   QueueHandle_t displayQueue = nullptr;
 
   static void displayTaskEntry(void* param) {
     AutopilotDisplays* self = static_cast<AutopilotDisplays*>(param);
@@ -25,6 +31,8 @@ public:
     altitude = new Display(ic2Multiplexer, 6);
     verticalSpeed = new Display(ic2Multiplexer, 5);
 
+    displayQueue = xQueueCreate(10, sizeof(DisplayMsg));
+
      xTaskCreatePinnedToCore(
     displayTaskEntry,        
     "DisplayTask",
@@ -37,12 +45,26 @@ public:
   }
 
   void displayLoop() {
+    DisplayMsg msg{};
+
       for(;;) {
-        heading->showText("Heading");
-        speed->showText("Speed");
-        altitude->showText("Altitude");
-        verticalSpeed->showText("VerticalSpeed");
+        if( xQueueReceive(displayQueue, &msg, portMAX_DELAY) == pdPASS) {
+          heading->showText(String(msg.heading));
+          speed->showText(String(msg.speed));
+          altitude->showText(String(msg.altitude));
+          verticalSpeed->showText(String(msg.verticalSpeed));
+        }
       }
+  }
+
+  void showValues(int heading, int speed, int altitude, int verticalSpeed) {
+    DisplayMsg msg;
+    msg.heading = heading;
+    msg.speed = speed;
+    msg.altitude = altitude;
+    msg.verticalSpeed = verticalSpeed;
+
+    xQueueSend(displayQueue, &msg, 0);
   }
 };
 
