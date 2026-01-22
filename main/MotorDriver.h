@@ -9,7 +9,7 @@ class MotorDriver {
   BLDCDriver6PWM driver = BLDCDriver6PWM(16, 17, 18, 23, 19, 33);
   GenericSensor* sensorWrapper;
 
-  static MagneticSensor* magneticSensor; 
+  inline static MagneticSensor* magneticSensor; 
 
   static float readSensorAngle() {
     return magneticSensor->readAngle();
