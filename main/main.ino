@@ -4,7 +4,7 @@
 #include "HapticKnob.h"
 #include "KnobManager.h"
 #include "IC2Multiplexer.h"
-#include "Display.h"
+#include "AutopilotDisplays.h"
 
 BLDCMotor motor = BLDCMotor(7);
 BLDCDriver6PWM driver = BLDCDriver6PWM(16, 17, 18, 23, 19, 33);
@@ -57,16 +57,11 @@ void setup() {
   // lastMillis = millis();
   // setupCustomSerial();
 
-  IC2Multiplexer ic2Multiplexer = IC2Multiplexer();
-  Display display1 = Display(&ic2Multiplexer, 0);
-  Display display2 = Display(&ic2Multiplexer, 7);
-  Display display3 = Display(&ic2Multiplexer, 6);
-  Display display4 = Display(&ic2Multiplexer, 5);
+  // ic2Multiplexer and displays are now initialized as global variables above
 
-  display1.showText("Display 1");
-  display2.showText("Display 2");
-  display3.showText("Display 3");
-  display4.showText("Display 4");
+
+IC2Multiplexer* ic2Multiplexer = new IC2Multiplexer();
+AutopilotDisplays* displays = new AutopilotDisplays(ic2Multiplexer);
 
 }
 

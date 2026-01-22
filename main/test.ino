@@ -77,15 +77,15 @@
 // void setup() {
 //   Serial.begin(115200);
 //   // Create task for display updates on Core 0
-//   xTaskCreatePinnedToCore(
-//     DisplayTaskCode,    // Task function
-//     "DisplayTask",      // Task name
-//     10000,              // Stack size in bytes
-//     NULL,               // Task parameter
-//     1,                  // Priority
-//     &DisplayTask,       // Task handle
-//     0                   // Core 0
-//   );
+  // xTaskCreatePinnedToCore(
+  //   DisplayTaskCode,    // Task function
+  //   "DisplayTask",      // Task name
+  //   10000,              // Stack size in bytes
+  //   NULL,               // Task parameter
+  //   1,                  // Priority
+  //   &DisplayTask,       // Task handle
+  //   0                   // Core 0
+  // );
 // }
 
 // void loop() {

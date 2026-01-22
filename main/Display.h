@@ -26,7 +26,6 @@ public:
     oledDisplay->setTextColor(SSD1306_WHITE);
     oledDisplay->setCursor(0, 0); // Set starting position
 
-    // Note: Adafruit library uses print()
     oledDisplay->println(text);
 
     oledDisplay->display(); // Show the content
