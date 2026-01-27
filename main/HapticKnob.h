@@ -3,6 +3,7 @@
 
 #include <SimpleFOC.h>
 #include <MotorDriver.h>
+#include <MotorDriver.h>
 
 class HapticKnob {
 private:
@@ -23,7 +24,6 @@ public:
     this->halfStep = stepSize / 2;
   }
 
-  // move() method - also right here!
   void move() {
     motorDriver->loopFOC();
 

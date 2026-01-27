@@ -2,39 +2,24 @@
 #define KNOB_MANAGER_H
 
 #include "HapticKnob.h"
+#include "MagneticSensor.h"
 
 class KnobManager {
 private:
   HapticKnob* knobs[4];  // Array of pointers to the 4 knobs
-  int currentIndex;
+  int currentIndex = 0;
 
   // Button pins
-  int buttonNextPin;
-  int buttonPrevPin;
+  int buttonNextPin = 13;
+  int buttonPrevPin = 14;
 
   // Debouncing
-  unsigned long lastButtonPressTime;
-  const unsigned long debounceDelay = 200; // 200ms debounce
-
-public:
-  // Constructor - takes references to all 4 knobs and button pins
-  KnobManager(HapticKnob& knob0, HapticKnob& knob1, HapticKnob& knob2, HapticKnob& knob3,
-              int nextPin = 13, int prevPin = 14)
-    : currentIndex(0), buttonNextPin(nextPin), buttonPrevPin(prevPin), lastButtonPressTime(0) {
-    // Store pointers to knobs
-    knobs[0] = &knob0;
-    knobs[1] = &knob1;
-    knobs[2] = &knob2;
-    knobs[3] = &knob3;
-
-    // Setup button pins
-    pinMode(buttonNextPin, INPUT_PULLUP);  // Use internal pull-up resistors
-    pinMode(buttonPrevPin, INPUT_PULLUP);
-  }
+  unsigned long lastButtonPressTime = 0;
+  const unsigned long debounceDelay = 200;  // 200ms debounce
 
   // Get the currently active knob
-  HapticKnob& getCurrentKnob() {
-    return *knobs[currentIndex];
+  HapticKnob* getCurrentKnob() {
+    return knobs[currentIndex];
   }
 
   // Switch to next knob (stops at last)
@@ -55,9 +40,26 @@ public:
     }
   }
 
+public:
+  KnobManager() {
+    MagneticSensor* magneticSensor = new MagneticSensor();
+    MotorDriver* motorDriver = new MotorDriver(magneticSensor);
+
+    HapticKnob knobVerticalSpeed = HapticKnob("VS", motorDriver, 1, 1);
+    HapticKnob knobHeading = HapticKnob("H", motorDriver, 0.3, 0.3);
+    HapticKnob knobAltitude = HapticKnob("A", motorDriver, 0.3, 0.3);
+    HapticKnob knobSpeed = HapticKnob("S", motorDriver, 0.3, 0.3);
+
+    // Setup button pins
+    pinMode(buttonNextPin, INPUT_PULLUP);  // Use internal pull-up resistors
+    pinMode(buttonPrevPin, INPUT_PULLUP);
+  }
+
   // Check buttons and switch knobs if pressed
   void update() {
     unsigned long currentTime = millis();
+
+    getCurrentKnob()->move();
 
     // Check if enough time has passed since last button press (debouncing)
     if (currentTime - lastButtonPressTime > debounceDelay) {
@@ -73,11 +75,6 @@ public:
         lastButtonPressTime = currentTime;
       }
     }
-  }
-
-  // Get current index (useful for display)
-  int getCurrentIndex() {
-    return currentIndex;
   }
 };
 
