@@ -15,7 +15,14 @@ public:
     this->oledDisplay = new Adafruit_SSD1306(128, 64, &Wire1, -1);
 
     ic2Multiplexer->selectChannel(channel);
-    oledDisplay->begin(SSD1306_SWITCHCAPVCC, 0x3C);
+    bool displayInitialized = oledDisplay->begin(SSD1306_SWITCHCAPVCC, 0x3C);
+    if (displayInitialized) {
+      oledDisplay->clearDisplay();
+      oledDisplay->println("display ready");
+      oledDisplay->display(); 
+    } else {
+      Serial.println("X Failed to initialize display");
+    }
   }
 
   void showText(String text) {
@@ -24,11 +31,11 @@ public:
     oledDisplay->clearDisplay();
     oledDisplay->setTextSize(2);  // Set text size (1 is default)
     oledDisplay->setTextColor(SSD1306_WHITE);
-    oledDisplay->setCursor(0, 0); // Set starting position
+    oledDisplay->setCursor(0, 0);  // Set starting position
 
     oledDisplay->println(text);
 
-    oledDisplay->display(); // Show the content
+    oledDisplay->display();  
   }
 };
 

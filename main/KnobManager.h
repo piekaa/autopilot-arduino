@@ -42,13 +42,14 @@ private:
 
 public:
   KnobManager() {
+
     MagneticSensor* magneticSensor = new MagneticSensor();
     MotorDriver* motorDriver = new MotorDriver(magneticSensor);
 
-    HapticKnob knobVerticalSpeed = HapticKnob("VS", motorDriver, 1, 1);
-    HapticKnob knobHeading = HapticKnob("H", motorDriver, 0.3, 0.3);
-    HapticKnob knobAltitude = HapticKnob("A", motorDriver, 0.3, 0.3);
-    HapticKnob knobSpeed = HapticKnob("S", motorDriver, 0.3, 0.3);
+    knobs[0] = new HapticKnob("VS", motorDriver, 1, 1);
+    knobs[1] = new HapticKnob("H", motorDriver, 0.3, 0.3);
+    knobs[2] = new HapticKnob("A", motorDriver, 0.3, 0.3);
+    knobs[3] = new HapticKnob("S", motorDriver, 0.3, 0.3);
 
     // Setup button pins
     pinMode(buttonNextPin, INPUT_PULLUP);  // Use internal pull-up resistors

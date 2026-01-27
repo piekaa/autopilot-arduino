@@ -14,6 +14,8 @@ void setup() {
   Serial.begin(115200);
   Wire.begin(21, 22);
 
+  delay(100);  // Give I2C time to initialize
+
   knobManager = new KnobManager();
 
   // delay(1000);
@@ -31,12 +33,9 @@ void setup() {
   // lastMillis = millis();
   // setupCustomSerial();
 
-  // ic2Multiplexer and displays are now initialized as global variables above
-
 
   IC2Multiplexer* ic2Multiplexer = new IC2Multiplexer();
   displays = new AutopilotDisplays(ic2Multiplexer);
-
   serialCommands = new SerialCommands(displays);
 }
 

@@ -2,6 +2,7 @@
 #define MOTOR_DRIVER_H
 
 #include "MagneticSensor.h"
+#include <SimpleFOC.h>
 
 class MotorDriver {
 
@@ -24,6 +25,9 @@ public:
     this->magneticSensor = magneticSensor;
 
     sensorWrapper = new GenericSensor(readSensorAngle, initSensor);
+
+    // Explicitly initialize the sensor BEFORE motor init
+    sensorWrapper->init();
 
     int driverEnablePin = 5;
     pinMode(driverEnablePin, OUTPUT);
@@ -54,9 +58,12 @@ public:
     // ===== INITIALIZE FOC =====
     motor.init();
     motor.initFOC();
+
+    delay(1000);  // Delay after motor init like in working version
   }
 
   void loopFOC() {
+    sensorWrapper->update();
     motor.loopFOC();
   }
 
