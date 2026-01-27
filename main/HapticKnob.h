@@ -30,13 +30,13 @@ public:
     float angle = motorDriver->shaftAngle();
 
     if(abs(targetAngle - angle) > halfStep) {
-      Serial.println(name);
+      // Serial.println(name);
       if(targetAngle - angle < 0) {
         targetAngle += step;
-        Serial.println("-");
+        // Serial.println("-");
       } else {
         targetAngle -= step;
-        Serial.println("+");
+        // Serial.println("+");
       }
     }
 
