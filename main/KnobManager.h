@@ -40,7 +40,7 @@ private:
   }
 
 public:
-  KnobManager(IC2Multiplexer* ic2Multiplexer, SemaphoreHandle_t i2cMutex) {
+  KnobManager(IC2Multiplexer* ic2Multiplexer) {
     this->ic2Multiplexer = ic2Multiplexer;
 
 
@@ -50,7 +50,7 @@ public:
 
     AutopilotSetting* autopilotSetting = new AutopilotSetting();
 
-    Display* headingDisplay = new Display(ic2Multiplexer, 0, i2cMutex);
+    Display* headingDisplay = new Display(ic2Multiplexer, 0);
     HeadingSetting* headingSetting = new HeadingSetting(headingDisplay);
 
 

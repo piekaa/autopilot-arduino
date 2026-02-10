@@ -47,24 +47,27 @@ private:
   }
 
   void writeRegister(uint8_t reg, uint8_t value) {
-    ic2Multiplexer->selectChannel(channel);
+    ic2Multiplexer->selectAndLockChannel(channel);
     Wire1.beginTransmission(address);
     Wire1.write(reg);
     Wire1.write(value);
     Wire1.endTransmission();
+    ic2Multiplexer->unlockChannel();
   }
 
   uint8_t readRegister(uint8_t reg) {
-    ic2Multiplexer->selectChannel(channel);
+    ic2Multiplexer->selectAndLockChannel(channel);
     Wire1.beginTransmission(address);
     Wire1.write(reg);
     Wire1.endTransmission();
 
     Wire1.requestFrom(address, (uint8_t)1);
+    uint8_t result = 0;
     if (Wire1.available()) {
-      return Wire1.read();
+      result = Wire1.read();
     }
-    return 0;
+    ic2Multiplexer->unlockChannel();
+    return result;
   }
 
   uint16_t readAllInputs() {
