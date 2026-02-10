@@ -40,7 +40,7 @@ private:
   }
 
   void taskLoop() {
-    for(;;) {
+    for (;;) {
       vTaskDelay(pdMS_TO_TICKS(10));
       updateInputs();
     }
@@ -101,6 +101,11 @@ private:
     }
   }
 
+  void setButtonCallback(uint8_t pin, std::function<void()> callback) {
+    if (pin > 15) return;
+    pinCallbacks[pin] = callback;
+  }
+
 public:
   IOExpander(IC2Multiplexer* ic2Multiplexer, uint8_t channel, uint8_t address = 0x20) {
     this->ic2Multiplexer = ic2Multiplexer;
@@ -127,13 +132,12 @@ public:
       this,
       2,
       NULL,
-      0
-    );
+      0);
 
     Serial.println("IOExpander task started on Core 0");
   }
 
-  void configurePinAsInput(uint8_t pin, bool enablePullup = true) {
+  void configurePinAsInput(uint8_t pin, std::function<void()> callback) {
     if (pin > 15) return;
 
     uint16_t pinMask = 1 << pin;
@@ -143,19 +147,18 @@ public:
       uint8_t currentDir = readRegister(MCP23017_IODIRA);
       writeRegister(MCP23017_IODIRA, currentDir | (1 << pin));
 
-      if (enablePullup) {
-        uint8_t currentPullup = readRegister(MCP23017_GPPUA);
-        writeRegister(MCP23017_GPPUA, currentPullup | (1 << pin));
-      }
+      uint8_t currentPullup = readRegister(MCP23017_GPPUA);
+      writeRegister(MCP23017_GPPUA, currentPullup | (1 << pin));
+
     } else {
       uint8_t currentDir = readRegister(MCP23017_IODIRB);
       writeRegister(MCP23017_IODIRB, currentDir | (1 << (pin - 8)));
 
-      if (enablePullup) {
-        uint8_t currentPullup = readRegister(MCP23017_GPPUB);
-        writeRegister(MCP23017_GPPUB, currentPullup | (1 << (pin - 8)));
-      }
+      uint8_t currentPullup = readRegister(MCP23017_GPPUB);
+      writeRegister(MCP23017_GPPUB, currentPullup | (1 << (pin - 8)));
     }
+
+    setButtonCallback(pin, callback);
   }
 
   void configurePinAsOutput(uint8_t pin) {
@@ -197,18 +200,6 @@ public:
     uint16_t pinMask = 1 << pin;
     bool currentState = ledState & pinMask;
     setLED(pin, !currentState);
-  }
-
-  bool readButton(uint8_t pin) {
-    if (pin > 15) return false;
-
-    uint16_t currentState = readAllInputs();
-    return !(currentState & (1 << pin));
-  }
-
-  void setButtonCallback(uint8_t pin, std::function<void()> callback) {
-    if (pin > 15) return;
-    pinCallbacks[pin] = callback;
   }
 };
 

@@ -3,10 +3,15 @@
 
 #include "HapticKnob.h"
 #include "MagneticSensor.h"
+#include "AutopilotSetting.h"
+#include "HeadingSetting.h"
+#include "IC2Multiplexer.h"
+#include "Display.h"
 
 class KnobManager {
 private:
   HapticKnob* knobs[4];  // Array of pointers to the 4 knobs
+  IC2Multiplexer* ic2Multiplexer;
   int currentIndex = 0;
 
   // Button pins
@@ -22,38 +27,43 @@ private:
     return knobs[currentIndex];
   }
 
-  // Switch to next knob (stops at last)
   void next() {
-    if (currentIndex < 3) {  // Don't wrap around
+    if (currentIndex < 3) {  
       currentIndex++;
-      Serial.println("KS");
-      Serial.println(knobs[currentIndex]->getName());
     }
   }
 
-  // Switch to previous knob (stops at first)
   void previous() {
-    if (currentIndex > 0) {  // Don't wrap around
+    if (currentIndex > 0) {  
       currentIndex--;
-      Serial.println("KS");
-      Serial.println(knobs[currentIndex]->getName());
     }
   }
 
 public:
-  KnobManager() {
+  KnobManager(IC2Multiplexer* ic2Multiplexer, SemaphoreHandle_t i2cMutex) {
+    this->ic2Multiplexer = ic2Multiplexer;
+
+
 
     MagneticSensor* magneticSensor = new MagneticSensor();
     MotorDriver* motorDriver = new MotorDriver(magneticSensor);
 
-    knobs[0] = new HapticKnob("VS", motorDriver, 1, 1);
-    knobs[1] = new HapticKnob("H", motorDriver, 0.3, 0.3);
-    knobs[2] = new HapticKnob("A", motorDriver, 0.3, 0.3);
-    knobs[3] = new HapticKnob("S", motorDriver, 0.3, 0.3);
+    AutopilotSetting* autopilotSetting = new AutopilotSetting();
+
+    Display* headingDisplay = new Display(ic2Multiplexer, 0, i2cMutex);
+    HeadingSetting* headingSetting = new HeadingSetting(headingDisplay);
+
+
+    knobs[0] = new HapticKnob("VS", motorDriver, 1, 1, autopilotSetting);
+    knobs[1] = new HapticKnob("H", motorDriver, 0.3, 0.3, headingSetting);
+    knobs[2] = new HapticKnob("A", motorDriver, 0.3, 0.3, autopilotSetting);
+    knobs[3] = new HapticKnob("S", motorDriver, 0.3, 0.3, autopilotSetting);
 
     // Setup button pins
     pinMode(buttonNextPin, INPUT_PULLUP);  // Use internal pull-up resistors
     pinMode(buttonPrevPin, INPUT_PULLUP);
+
+    next();
   }
 
   // Check buttons and switch knobs if pressed

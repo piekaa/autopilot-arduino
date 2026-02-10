@@ -36,13 +36,13 @@ class AutopilotDisplays {
   }
 
 public:
-  AutopilotDisplays(IC2Multiplexer* ic2Multiplexer) {
+  AutopilotDisplays(IC2Multiplexer* ic2Multiplexer, SemaphoreHandle_t i2cMutex) {
     this->ic2Multiplexer = ic2Multiplexer;
 
-    heading = new Display(ic2Multiplexer, 0);
-    speed = new Display(ic2Multiplexer, 7);
-    altitude = new Display(ic2Multiplexer, 6);
-    verticalSpeed = new Display(ic2Multiplexer, 5);
+    heading = new Display(ic2Multiplexer, 0, i2cMutex);
+    speed = new Display(ic2Multiplexer, 7, i2cMutex);
+    altitude = new Display(ic2Multiplexer, 6, i2cMutex);
+    verticalSpeed = new Display(ic2Multiplexer, 5, i2cMutex);
 
     displayQueue = xQueueCreate(10, sizeof(DisplayMsg));
 
@@ -55,6 +55,7 @@ public:
     NULL, 
     0                        
   );
+
   }
 
   void showValues(int heading, int speed, int altitude, int verticalSpeed) {

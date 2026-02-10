@@ -3,21 +3,23 @@
 
 #include <SimpleFOC.h>
 #include <MotorDriver.h>
-#include <MotorDriver.h>
+#include "AutopilotSetting.h"
 
 class HapticKnob {
 private:
   MotorDriver* motorDriver;
+  AutopilotSetting* autopilotSetting;
   float maxVoltage;
   float step;
   String name;
   float halfStep;
-  inline static float targetAngle = 3;  // inline static allows initialization here
+  inline static float targetAngle = 3; 
 
 public:
   
-  HapticKnob(String name, MotorDriver* motorDriver, float maxVolt, float stepSize) {
+  HapticKnob(String name, MotorDriver* motorDriver, float maxVolt, float stepSize, AutopilotSetting* autopilotSetting) {
     this->motorDriver = motorDriver;
+    this->autopilotSetting = autopilotSetting;
     this->name = name;
     this->maxVoltage = maxVolt;
     this->step = stepSize;
@@ -30,13 +32,12 @@ public:
     float angle = motorDriver->shaftAngle();
 
     if(abs(targetAngle - angle) > halfStep) {
-      // Serial.println(name);
       if(targetAngle - angle < 0) {
         targetAngle += step;
-        // Serial.println("-");
+        this->autopilotSetting->minus();
       } else {
         targetAngle -= step;
-        // Serial.println("+");
+        this->autopilotSetting->plus();
       }
     }
 
