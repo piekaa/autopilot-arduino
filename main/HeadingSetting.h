@@ -5,60 +5,22 @@
 #include "Display.h"
 
 class HeadingSetting : public AutopilotSetting {
-
-  Display* display;
-  volatile int heading;
-  volatile int previousHeading;
-
-  static void headingTaskEntry(void* param) {
-    HeadingSetting* self = static_cast<HeadingSetting*>(param);
-    self->headingUpdateLoop();
-  }
-
-  void headingUpdateLoop() {
-    for(;;) {
-      vTaskDelay(pdMS_TO_TICKS(100));
-
-      if(heading != previousHeading) {
-        display->showText(String(heading));
-        previousHeading = heading;
-      }
-    }
-  }
-
 public:
-
-  HeadingSetting(Display* display) {
-    this->display = display;
-    this->heading = 0;
-    this->previousHeading = -1;
-
-    xTaskCreatePinnedToCore(
-      headingTaskEntry,
-      "HeadingTask",
-      4096,
-      this,
-      2,
-      NULL,
-      0
-    );
-  }
+  HeadingSetting(Display* display)
+    : AutopilotSetting(display, "HeadingSettingTask") 
+  {}
 
   virtual void plus() {
-    heading++;
-    if(heading > 359) {
-      heading = 0;
+    value++;
+    if(value > 359) {
+      value = 0;
     }
   }
   virtual void minus() {
-    heading--;
-    if(heading < 0) {
-      heading = 359;
+    value--;
+    if(value < 0) {
+      value = 359;
     }
-  }
-
-  int getHeading() const {
-    return heading;
   }
 };
 

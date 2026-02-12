@@ -5,6 +5,9 @@
 #include "MagneticSensor.h"
 #include "AutopilotSetting.h"
 #include "HeadingSetting.h"
+#include "SpeedSettings.h"
+#include "AltitudeSettings.h"
+#include "VerticalSpeedSettings.h"
 #include "IC2Multiplexer.h"
 #include "Display.h"
 
@@ -27,17 +30,7 @@ private:
     return knobs[currentIndex];
   }
 
-  void next() {
-    if (currentIndex < 3) {  
-      currentIndex++;
-    }
-  }
 
-  void previous() {
-    if (currentIndex > 0) {  
-      currentIndex--;
-    }
-  }
 
 public:
   KnobManager(IC2Multiplexer* ic2Multiplexer) {
@@ -48,22 +41,43 @@ public:
     MagneticSensor* magneticSensor = new MagneticSensor();
     MotorDriver* motorDriver = new MotorDriver(magneticSensor);
 
-    AutopilotSetting* autopilotSetting = new AutopilotSetting();
 
     Display* headingDisplay = new Display(ic2Multiplexer, 0);
+    Display* speedDisplay = new Display(ic2Multiplexer, 7);
+    Display* altitudeDisplay = new Display(ic2Multiplexer, 6);
+    Display* verticalSpeedDisplay = new Display(ic2Multiplexer, 5);
+
+
     HeadingSetting* headingSetting = new HeadingSetting(headingDisplay);
+    SpeedSettings* speedSettings = new SpeedSettings(speedDisplay);
+    AltitudeSettings* altitudeSettings = new AltitudeSettings(altitudeDisplay);
+    VerticalSpeedSettings* verticalSpeedSettings = new VerticalSpeedSettings(verticalSpeedDisplay);
+
+    knobs[0] = new HapticKnob("H", motorDriver, 0.3, 0.3, headingSetting);
+    knobs[1] = new HapticKnob("S", motorDriver, 0.3, 0.3, speedSettings);
+    knobs[2] = new HapticKnob("A", motorDriver, 0.3, 0.3, altitudeSettings);
+    knobs[3] = new HapticKnob("VS", motorDriver, 1, 1, verticalSpeedSettings);
 
 
-    knobs[0] = new HapticKnob("VS", motorDriver, 1, 1, autopilotSetting);
-    knobs[1] = new HapticKnob("H", motorDriver, 0.3, 0.3, headingSetting);
-    knobs[2] = new HapticKnob("A", motorDriver, 0.3, 0.3, autopilotSetting);
-    knobs[3] = new HapticKnob("S", motorDriver, 0.3, 0.3, autopilotSetting);
+
 
     // Setup button pins
     pinMode(buttonNextPin, INPUT_PULLUP);  // Use internal pull-up resistors
     pinMode(buttonPrevPin, INPUT_PULLUP);
 
     next();
+  }
+
+  void next() {
+    if (currentIndex < 3) {
+      currentIndex++;
+    }
+  }
+
+  void previous() {
+    if (currentIndex > 0) {
+      currentIndex--;
+    }
   }
 
   // Check buttons and switch knobs if pressed

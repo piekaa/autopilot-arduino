@@ -56,12 +56,14 @@ void setup() {
     Serial.println("Button PA2 pressed!");
   });
 
-  ioExpander->configurePinAsInput(3, []() {
+  ioExpander->configurePinAsInput(3, [knobManager]() {
     Serial.println("Button PA3 pressed!");
+    knobManager->next();
   });
 
-  ioExpander->configurePinAsInput(4, []() {
+  ioExpander->configurePinAsInput(4, [knobManager]() {
     Serial.println("Button PA4 pressed!");
+    knobManager->previous();
   });
 
   ioExpander->configurePinAsOutput(5);
