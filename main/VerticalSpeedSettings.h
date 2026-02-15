@@ -16,6 +16,11 @@ public:
   virtual void minus() {
     value-=100;
   }
+
+  virtual void sendToGame() {
+    Serial.print("VS ");
+    Serial.println(value);
+  }
 };
 
 

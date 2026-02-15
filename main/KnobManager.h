@@ -13,7 +13,8 @@
 
 class KnobManager {
 private:
-  HapticKnob* knobs[4];  // Array of pointers to the 4 knobs
+  HapticKnob* knobs[4];
+  AutopilotSetting* autopilotSettings[4];
   IC2Multiplexer* ic2Multiplexer;
   int currentIndex = 0;
 
@@ -30,28 +31,22 @@ private:
     return knobs[currentIndex];
   }
 
-
-
 public:
-  KnobManager(IC2Multiplexer* ic2Multiplexer) {
+  KnobManager(IC2Multiplexer* ic2Multiplexer,
+              HeadingSetting* headingSetting,
+              SpeedSettings* speedSettings,
+              AltitudeSettings* altitudeSettings,
+              VerticalSpeedSettings* verticalSpeedSettings) {
     this->ic2Multiplexer = ic2Multiplexer;
-
-
 
     MagneticSensor* magneticSensor = new MagneticSensor();
     MotorDriver* motorDriver = new MotorDriver(magneticSensor);
 
+    autopilotSettings[0] = headingSetting;
+    autopilotSettings[1] = speedSettings;
+    autopilotSettings[2] = altitudeSettings;
+    autopilotSettings[3] = verticalSpeedSettings;
 
-    Display* headingDisplay = new Display(ic2Multiplexer, 0);
-    Display* speedDisplay = new Display(ic2Multiplexer, 7);
-    Display* altitudeDisplay = new Display(ic2Multiplexer, 6);
-    Display* verticalSpeedDisplay = new Display(ic2Multiplexer, 5);
-
-
-    HeadingSetting* headingSetting = new HeadingSetting(headingDisplay);
-    SpeedSettings* speedSettings = new SpeedSettings(speedDisplay);
-    AltitudeSettings* altitudeSettings = new AltitudeSettings(altitudeDisplay);
-    VerticalSpeedSettings* verticalSpeedSettings = new VerticalSpeedSettings(verticalSpeedDisplay);
 
     knobs[0] = new HapticKnob("H", motorDriver, 0.3, 0.3, headingSetting);
     knobs[1] = new HapticKnob("S", motorDriver, 0.3, 0.3, speedSettings);
@@ -71,12 +66,24 @@ public:
   void next() {
     if (currentIndex < 3) {
       currentIndex++;
+      activateSelected(currentIndex);
     }
   }
 
   void previous() {
     if (currentIndex > 0) {
       currentIndex--;
+      activateSelected(currentIndex);
+    }
+  }
+
+  void activateSelected(int index) {
+    for (int i = 0; i < 4; i++) {
+      if (i == index) {
+        autopilotSettings[i]->activate();
+      } else {
+        autopilotSettings[i]->deactivate();
+      }
     }
   }
 

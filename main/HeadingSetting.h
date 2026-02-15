@@ -22,6 +22,11 @@ public:
       value = 359;
     }
   }
+
+  virtual void sendToGame() {
+    Serial.print("H ");
+    Serial.println(value);
+  }
 };
 
 

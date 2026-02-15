@@ -9,6 +9,14 @@ class Display {
   IC2Multiplexer* ic2Multiplexer;
   uint8_t channel;
   Adafruit_SSD1306* oledDisplay;
+  bool frameEnabled = false;
+
+  void renderFrame(bool draw) {
+    uint16_t color = draw ? SSD1306_WHITE : SSD1306_BLACK;
+    oledDisplay->drawRect(0, 0, 128, 64, color);
+    oledDisplay->drawRect(1, 1, 126, 62, color);
+  }
+
 public:
   Display(IC2Multiplexer* ic2Multiplexer, uint8_t channel) {
     this->ic2Multiplexer = ic2Multiplexer;
@@ -32,8 +40,27 @@ public:
     oledDisplay->clearDisplay();
     oledDisplay->setTextSize(2);
     oledDisplay->setTextColor(SSD1306_WHITE);
-    oledDisplay->setCursor(0, 0);
+    oledDisplay->setCursor(10, 25);
     oledDisplay->println(text);
+    if (frameEnabled) {
+      renderFrame(true);
+    }
+    oledDisplay->display();
+    ic2Multiplexer->unlockChannel();
+  }
+
+  void drawFrame() {
+    ic2Multiplexer->selectAndLockChannel(channel);
+    frameEnabled = true;
+    renderFrame(true);
+    oledDisplay->display();
+    ic2Multiplexer->unlockChannel();
+  }
+
+  void removeFrame() {
+    ic2Multiplexer->selectAndLockChannel(channel);
+    frameEnabled = false;
+    renderFrame(false);
     oledDisplay->display();
     ic2Multiplexer->unlockChannel();
   }

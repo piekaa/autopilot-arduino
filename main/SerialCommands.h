@@ -1,9 +1,17 @@
 #ifndef SERIAL_COMMANDS_H
 #define SERIAL_COMMANDS_H
 
+#include "HeadingSetting.h"
+#include "SpeedSettings.h"
+#include "AltitudeSettings.h"
+#include "VerticalSpeedSettings.h"
+
 class SerialCommands {
 
-  AutopilotDisplays* displays;
+ HeadingSetting* headingSetting;
+  SpeedSettings* speedSettings;
+  AltitudeSettings* altitudeSettings;
+  VerticalSpeedSettings* verticalSpeedSettings;
 
   static void commandsTaskEntry(void* param) {
     SerialCommands* self = static_cast<SerialCommands*>(param);
@@ -14,16 +22,10 @@ class SerialCommands {
     for (;;) {
       vTaskDelay(pdMS_TO_TICKS(100));
       if (Serial.available() > 0) {
-        char commandType = Serial.read();
-
-        if (commandType == 'D') {
-          int heading = Serial.parseInt();
-          int speed = Serial.parseInt();
-          int altitude = Serial.parseInt();
-          int verticalSpeed = Serial.parseInt();
-          displays->showValues(heading, speed, altitude, verticalSpeed);
-        } else {
-          Serial.println("X Unknown command type: " + commandType);
+        String commandType = Serial.readStringUntil(' ');
+        if (commandType == "H") {
+          int value = Serial.parseInt();
+          headingSetting->setValue(value);
         }
         Serial.readStringUntil('\n');
       }
@@ -31,8 +33,17 @@ class SerialCommands {
   }
 
 public:
-  SerialCommands(AutopilotDisplays* displays) {
-    this->displays = displays;
+  SerialCommands( HeadingSetting* headingSetting,
+  SpeedSettings* speedSettings,
+  AltitudeSettings* altitudeSettings,
+  VerticalSpeedSettings* verticalSpeedSettings) {
+   
+
+  this->headingSetting = headingSetting;
+  this->speedSettings= speedSettings;
+  this->altitudeSettings = altitudeSettings;
+  this->verticalSpeedSettings = verticalSpeedSettings;
+
     xTaskCreatePinnedToCore(
       commandsTaskEntry,
       "CommandsTask",
