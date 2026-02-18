@@ -10,7 +10,6 @@ class AutopilotSetting {
   volatile bool active = false;
   volatile bool previousActive = false;
 
-
   static void taskEntry(void* param) {
     AutopilotSetting* self = static_cast<AutopilotSetting*>(param);
     self->updateLoop();
@@ -19,6 +18,8 @@ class AutopilotSetting {
   void updateLoop() {
     for (;;) {
       vTaskDelay(pdMS_TO_TICKS(100));
+
+      lock--;
 
       if (active != previousActive) {
 
@@ -42,6 +43,7 @@ class AutopilotSetting {
 
 protected:
   volatile int value;
+  int lock = 0;
 
 
 public:
@@ -81,6 +83,9 @@ public:
   }
 
   void setValue(int value) {
+    if(lock > 0) {
+      return;
+    }
     this->value = value;
   }
 };

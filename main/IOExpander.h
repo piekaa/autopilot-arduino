@@ -124,7 +124,7 @@ public:
     writeRegister(MCP23017_OLATA, 0x00);
     writeRegister(MCP23017_OLATB, 0x00);
 
-    Serial.println("IOExpander initialized");
+    Serial.println("X IOExpander initialized");
 
     lastButtonState = readAllInputs();
 
@@ -137,7 +137,7 @@ public:
       NULL,
       0);
 
-    Serial.println("IOExpander task started on Core 0");
+    Serial.println("X IOExpander task started on Core 0");
   }
 
   void configurePinAsInput(uint8_t pin, std::function<void()> callback) {

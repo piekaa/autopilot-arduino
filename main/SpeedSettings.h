@@ -12,12 +12,14 @@ public:
 
   virtual void plus() {
     value++;
+    lock = 10;
     if(value > 450) {
       value = 450;
     }
   }
   virtual void minus() {
     value--;
+    lock = 10;
     if(value < 0) {
       value = 0;
     }

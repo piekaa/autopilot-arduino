@@ -5,13 +5,15 @@
 #include "SpeedSettings.h"
 #include "AltitudeSettings.h"
 #include "VerticalSpeedSettings.h"
+#include "IOExpander.h"
 
 class SerialCommands {
 
- HeadingSetting* headingSetting;
+  HeadingSetting* headingSetting;
   SpeedSettings* speedSettings;
   AltitudeSettings* altitudeSettings;
   VerticalSpeedSettings* verticalSpeedSettings;
+  IOExpander* ioExpander;
 
   static void commandsTaskEntry(void* param) {
     SerialCommands* self = static_cast<SerialCommands*>(param);
@@ -26,23 +28,42 @@ class SerialCommands {
         if (commandType == "H") {
           int value = Serial.parseInt();
           headingSetting->setValue(value);
+          Serial.readStringUntil('\n');
+          continue;
         }
+
+        if (commandType == "AP") {
+          String apStatus = Serial.readStringUntil('\n');
+
+          if(apStatus == "ON") {
+            ioExpander->setLED(5, true);
+          }
+
+          if(apStatus == "OFF") {
+            ioExpander->setLED(5, false);
+          }
+          continue;
+
+        }
+
         Serial.readStringUntil('\n');
       }
     }
   }
 
 public:
-  SerialCommands( HeadingSetting* headingSetting,
-  SpeedSettings* speedSettings,
-  AltitudeSettings* altitudeSettings,
-  VerticalSpeedSettings* verticalSpeedSettings) {
-   
+  SerialCommands(HeadingSetting* headingSetting,
+                 SpeedSettings* speedSettings,
+                 AltitudeSettings* altitudeSettings,
+                 VerticalSpeedSettings* verticalSpeedSettings,
+                 IOExpander* ioExpander) {
 
-  this->headingSetting = headingSetting;
-  this->speedSettings= speedSettings;
-  this->altitudeSettings = altitudeSettings;
-  this->verticalSpeedSettings = verticalSpeedSettings;
+
+    this->headingSetting = headingSetting;
+    this->speedSettings = speedSettings;
+    this->altitudeSettings = altitudeSettings;
+    this->verticalSpeedSettings = verticalSpeedSettings;
+    this->ioExpander = ioExpander;
 
     xTaskCreatePinnedToCore(
       commandsTaskEntry,

@@ -33,8 +33,6 @@ void setup() {
   knobManager = new KnobManager(ic2Multiplexer, headingSetting, speedSettings, altitudeSettings, verticalSpeedSettings);
 
 
-  // displays = new AutopilotDisplays(ic2Multiplexer);
-  serialCommands = new SerialCommands(headingSetting, speedSettings, altitudeSettings, verticalSpeedSettings);
 
   // Initialize IO Expander on multiplexer channel 4, I2C address 0x20
   ioExpander = new IOExpander(ic2Multiplexer, 4, 0x20);
@@ -61,7 +59,7 @@ void setup() {
   });
 
   ioExpander->configurePinAsInput(1, []() {
-    Serial.println("X Button PA1 pressed!");
+    Serial.println("AP TOGGLE");
   });
 
   ioExpander->configurePinAsInput(2, []() {
@@ -79,7 +77,11 @@ void setup() {
   });
 
   ioExpander->configurePinAsOutput(5);
-  ioExpander->setLED(5, true);
+
+
+  // displays = new AutopilotDisplays(ic2Multiplexer);
+  serialCommands = new SerialCommands(headingSetting, speedSettings, altitudeSettings, verticalSpeedSettings, ioExpander);
+
 }
 
 
