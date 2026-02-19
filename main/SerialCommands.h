@@ -32,6 +32,27 @@ class SerialCommands {
           continue;
         }
 
+        if (commandType == "S") {
+          int value = Serial.parseInt();
+          speedSettings->setValue(value);
+          Serial.readStringUntil('\n');
+          continue;
+        }
+
+        if (commandType == "A") {
+          int value = Serial.parseInt();
+          altitudeSettings->setValue(value);
+          Serial.readStringUntil('\n');
+          continue;
+        }
+
+        if (commandType == "VS") {
+          int value = Serial.parseInt();
+          verticalSpeedSettings->setValue(value);
+          Serial.readStringUntil('\n');
+          continue;
+        }
+
         if (commandType == "AP") {
           String apStatus = Serial.readStringUntil('\n');
 
@@ -43,8 +64,87 @@ class SerialCommands {
             ioExpander->setLED(5, false);
           }
           continue;
-
         }
+
+
+        if(commandType == "AP_HEADING") {
+            String headingStatus = Serial.readStringUntil('\n');
+
+          if(headingStatus == "ON") {
+            headingSetting->headingOn();
+          }
+
+          if(headingStatus == "OFF") {
+            headingSetting->headingOff();
+          }
+          continue;
+        }
+
+        if(commandType == "AP_LNAV") {
+          String lnavStatus = Serial.readStringUntil('\n');
+
+          if(lnavStatus == "ON") {
+            headingSetting->navOn();
+          }
+
+          if(lnavStatus == "OFF") {
+            headingSetting->navOff();
+          }
+          continue;
+        }
+
+        if(commandType == "AP_VNAV") {
+          String vnavStatus = Serial.readStringUntil('\n');
+
+          if(vnavStatus == "ON") {
+            verticalSpeedSettings->vnavOn();
+          }
+
+          if(vnavStatus == "OFF") {
+            verticalSpeedSettings->vnavOff();
+          }
+          continue;
+        }
+
+        if(commandType == "AP_SPEED") {
+          String speedStatus = Serial.readStringUntil('\n');
+
+          if(speedStatus == "ON") {
+            speedSettings->speedOn();
+          }
+
+          if(speedStatus == "OFF") {
+            speedSettings->speedOff();
+          }
+          continue;
+        }
+
+        if(commandType == "AP_ALTITUDE") {
+          String altitudeStatus = Serial.readStringUntil('\n');
+
+          if(altitudeStatus == "ON") {
+            altitudeSettings->altitudeOn();
+          }
+
+          if(altitudeStatus == "OFF") {
+            altitudeSettings->altitudeOff();
+          }
+          continue;
+        }
+
+        if(commandType == "AP_VS") {
+          String vsStatus = Serial.readStringUntil('\n');
+
+          if(vsStatus == "ON") {
+            verticalSpeedSettings->vsOn();
+          }
+
+          if(vsStatus == "OFF") {
+            verticalSpeedSettings->vsOff();
+          }
+          continue;
+        }
+
 
         Serial.readStringUntil('\n');
       }

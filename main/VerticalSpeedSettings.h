@@ -23,6 +23,22 @@ public:
     Serial.print("VS ");
     Serial.println(value);
   }
+
+  void vnavOn() {
+    display->setBottomLeftIndicator("VNAV");
+  }
+
+  void vnavOff() {
+    display->clearBottomLeftIndicator();
+  }
+
+  void vsOn() {
+    display->setBottomRightIndicator("VS");
+  }
+
+  void vsOff() {
+    display->clearBottomRightIndicator();
+  }
 };
 
 

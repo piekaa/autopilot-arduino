@@ -29,6 +29,14 @@ public:
     Serial.print("S ");
     Serial.println(value);
   }
+
+  void speedOn() {
+    display->setBottomLeftIndicator("SPD");
+  }
+
+  void speedOff() {
+    display->clearBottomLeftIndicator();
+  }
 };
 
 

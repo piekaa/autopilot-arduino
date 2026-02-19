@@ -4,7 +4,7 @@
 #include <Display.h>
 
 class AutopilotSetting {
-  Display* display;
+  
   volatile int previousValue;
 
   volatile bool active = false;
@@ -44,7 +44,7 @@ class AutopilotSetting {
 protected:
   volatile int value;
   int lock = 0;
-
+  Display* display;
 
 public:
 

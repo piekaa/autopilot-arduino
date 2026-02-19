@@ -26,6 +26,14 @@ public:
     Serial.print("A ");
     Serial.println(value);
   }
+
+  void altitudeOn() {
+    display->setBottomLeftIndicator("ALT");
+  }
+
+  void altitudeOff() {
+    display->clearBottomLeftIndicator();
+  }
 };
 
 

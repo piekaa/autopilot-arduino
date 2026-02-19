@@ -39,23 +39,23 @@ void setup() {
 
   // Configure pin 8 (PB0) as button input with pullup
   ioExpander->configurePinAsInput(12, []() {
-    Serial.println("X Button PB4 pressed!");
+    Serial.println("AP_HEADING TOGGLE");
   });
 
   ioExpander->configurePinAsInput(13, []() {
-    Serial.println("X Button PB5 pressed!");
+    Serial.println("AP_SPEED TOGGLE");
   });
 
   ioExpander->configurePinAsInput(14, []() {
-    Serial.println("X Button PB6 pressed!");
+    Serial.println("AP_ALTITUDE TOGGLE");
   });
 
   ioExpander->configurePinAsInput(15, []() {
-    Serial.println("X Button PB7 pressed!");
+    Serial.println("AP_VS TOGGLE");
   });
 
   ioExpander->configurePinAsInput(0, []() {
-    Serial.println("X Button PA0 pressed!");
+    Serial.println("AP_VNAV TOGGLE");
   });
 
   ioExpander->configurePinAsInput(1, []() {
@@ -63,7 +63,7 @@ void setup() {
   });
 
   ioExpander->configurePinAsInput(2, []() {
-    Serial.println("X Button PA2 pressed!");
+    Serial.println("AP_LNAV TOGGLE");
   });
 
   ioExpander->configurePinAsInput(3, [knobManager]() {
