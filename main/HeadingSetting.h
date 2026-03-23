@@ -10,15 +10,15 @@ public:
     : AutopilotSetting(display, "HeadingSettingTask") {}
 
   virtual void plus() {
+    AutopilotSetting::plus();
     value++;
-    lock = 10;
     if (value > 359) {
       value = 0;
     }
   }
   virtual void minus() {
+    AutopilotSetting::minus();
     value--;
-    lock = 10;
     if (value < 0) {
       value = 359;
     }

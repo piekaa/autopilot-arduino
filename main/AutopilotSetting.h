@@ -33,9 +33,9 @@ class AutopilotSetting {
       }
 
       if (value != previousValue) {
+        previousValue = value;
         display->showText(String(value));
         this->sendToGame();
-        previousValue = value;
       }
     }
   }
@@ -43,7 +43,7 @@ class AutopilotSetting {
 
 protected:
   volatile int value;
-  int lock = 0;
+  volatile int lock = 0;
   Display* display;
 
 public:
@@ -64,10 +64,10 @@ public:
   }
 
   virtual void plus() {
-    Serial.println("X [plus] Implement me in child class");
+    lock = 10;
   }
   virtual void minus() {
-    Serial.println("X [minus] Implement me in child class");
+    lock = 10;
   }
 
   virtual void sendToGame() {

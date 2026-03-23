@@ -11,12 +11,12 @@ public:
   {}
 
   virtual void plus() {
+    AutopilotSetting::plus();
     value+=100;
-    lock = 10;
   }
   virtual void minus() {
+    AutopilotSetting::minus();
     value-=100;
-    lock = 10;
     if(value < 0) {
       value = 0;
     }

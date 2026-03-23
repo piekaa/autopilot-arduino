@@ -22,7 +22,7 @@ class SerialCommands {
 
   void serialLoop() {
     for (;;) {
-      vTaskDelay(pdMS_TO_TICKS(100));
+      vTaskDelay(pdMS_TO_TICKS(10));
       if (Serial.available() > 0) {
         String commandType = Serial.readStringUntil(' ');
         if (commandType == "H") {
