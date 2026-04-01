@@ -16,139 +16,128 @@ class SerialCommands {
   VerticalSpeedSettings* verticalSpeedSettings;
   IOExpander* ioExpander;
 
+  String buffer = "";
+  static const int MAX_BUFFER_SIZE = 128;
+
   static void commandsTaskEntry(void* param) {
     SerialCommands* self = static_cast<SerialCommands*>(param);
     self->serialLoop();
   }
 
+  void processCommand(String command) {
+
+    //Serial.println("X Processing command: " + command);
+
+    command.trim();
+    if (command.length() == 0) return;
+
+    int spaceIndex = command.indexOf(' ');
+    String commandType = (spaceIndex > 0) ? command.substring(0, spaceIndex) : command;
+    String value = (spaceIndex > 0) ? command.substring(spaceIndex + 1) : "";
+
+    if (commandType == "H") {
+      headingSetting->setValue(value.toInt());
+      return;
+    }
+
+    if (commandType == "S") {
+      speedSettings->setValue(value.toInt());
+      return;
+    }
+
+    if (commandType == "A") {
+      altitudeSettings->setValue(value.toInt());
+      return;
+    }
+
+    if (commandType == "VS") {
+      verticalSpeedSettings->setValue(value.toInt());
+      return;
+    }
+
+    if (commandType == "AP") {
+      if(value == "ON") {
+        ioExpander->setLED(5, true);
+      } else if(value == "OFF") {
+        ioExpander->setLED(5, false);
+      }
+      return;
+    }
+
+    if(commandType == "AP_HEADING") {
+      if(value == "ON") {
+        headingSetting->headingOn();
+      } else if(value == "OFF") {
+        headingSetting->headingOff();
+      }
+      return;
+    }
+
+    if(commandType == "AP_LNAV") {
+      if(value == "ON") {
+        headingSetting->navOn();
+      } else if(value == "OFF") {
+        headingSetting->navOff();
+      }
+      return;
+    }
+
+    if(commandType == "AP_VNAV") {
+      if(value == "ON") {
+        verticalSpeedSettings->vnavOn();
+      } else if(value == "OFF") {
+        verticalSpeedSettings->vnavOff();
+      }
+      return;
+    }
+
+    if(commandType == "AP_SPEED") {
+      if(value == "ON") {
+        speedSettings->speedOn();
+      } else if(value == "OFF") {
+        speedSettings->speedOff();
+      }
+      return;
+    }
+
+    if(commandType == "AP_ALTITUDE") {
+      if(value == "ON") {
+        altitudeSettings->altitudeOn();
+      } else if(value == "OFF") {
+        altitudeSettings->altitudeOff();
+      }
+      return;
+    }
+
+    if(commandType == "AP_VS") {
+      if(value == "ON") {
+        verticalSpeedSettings->vsOn();
+      } else if(value == "OFF") {
+        verticalSpeedSettings->vsOff();
+      }
+      return;
+    }
+  }
+
   void serialLoop() {
     esp_task_wdt_delete(NULL);
     for (;;) {
-      vTaskDelay(pdMS_TO_TICKS(50));
-      if (Serial.available() > 0) {
-        String commandType = Serial.readStringUntil(' ');
-        if (commandType == "H") {
-          int value = Serial.parseInt();
-          headingSetting->setValue(value);
-          Serial.readStringUntil('\n');
-          continue;
+      vTaskDelay(pdMS_TO_TICKS(10));
+
+      while (Serial.available() > 0) {
+        char c = Serial.read();
+
+        if (c == '\n' || c == '\r') {
+          if (buffer.length() > 0) {
+            processCommand(buffer);
+            buffer = "";
+          }
+        } else {
+          buffer += c;
+          if (buffer.length() >= MAX_BUFFER_SIZE) {
+            buffer = "";
+          }
         }
-
-        if (commandType == "S") {
-          int value = Serial.parseInt();
-          speedSettings->setValue(value);
-          Serial.readStringUntil('\n');
-          continue;
-        }
-
-        if (commandType == "A") {
-          int value = Serial.parseInt();
-          altitudeSettings->setValue(value);
-          Serial.readStringUntil('\n');
-          continue;
-        }
-
-        if (commandType == "VS") {
-          int value = Serial.parseInt();
-          verticalSpeedSettings->setValue(value);
-          Serial.readStringUntil('\n');
-          continue;
-        }
-
-        if (commandType == "AP") {
-          String apStatus = Serial.readStringUntil('\n');
-
-          if(apStatus == "ON") {
-            ioExpander->setLED(5, true);
-          }
-
-          if(apStatus == "OFF") {
-            ioExpander->setLED(5, false);
-          }
-          continue;
-        }
-
-
-        if(commandType == "AP_HEADING") {
-            String headingStatus = Serial.readStringUntil('\n');
-
-          if(headingStatus == "ON") {
-            headingSetting->headingOn();
-          }
-
-          if(headingStatus == "OFF") {
-            headingSetting->headingOff();
-          }
-          continue;
-        }
-
-        if(commandType == "AP_LNAV") {
-          String lnavStatus = Serial.readStringUntil('\n');
-
-          if(lnavStatus == "ON") {
-            headingSetting->navOn();
-          }
-
-          if(lnavStatus == "OFF") {
-            headingSetting->navOff();
-          }
-          continue;
-        }
-
-        if(commandType == "AP_VNAV") {
-          String vnavStatus = Serial.readStringUntil('\n');
-
-          if(vnavStatus == "ON") {
-            verticalSpeedSettings->vnavOn();
-          }
-
-          if(vnavStatus == "OFF") {
-            verticalSpeedSettings->vnavOff();
-          }
-          continue;
-        }
-
-        if(commandType == "AP_SPEED") {
-          String speedStatus = Serial.readStringUntil('\n');
-
-          if(speedStatus == "ON") {
-            speedSettings->speedOn();
-          }
-
-          if(speedStatus == "OFF") {
-            speedSettings->speedOff();
-          }
-          continue;
-        }
-
-        if(commandType == "AP_ALTITUDE") {
-          String altitudeStatus = Serial.readStringUntil('\n');
-
-          if(altitudeStatus == "ON") {
-            altitudeSettings->altitudeOn();
-          }
-
-          if(altitudeStatus == "OFF") {
-            altitudeSettings->altitudeOff();
-          }
-          continue;
-        }
-
-        if(commandType == "AP_VS") {
-          String vsStatus = Serial.readStringUntil('\n');
-
-          if(vsStatus == "ON") {
-            verticalSpeedSettings->vsOn();
-          }
-
-          if(vsStatus == "OFF") {
-            verticalSpeedSettings->vsOff();
-          }
-          continue;
-        }
-
-
-        Serial.readStringUntil('\n');
       }
     }
   }
