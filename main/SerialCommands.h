@@ -6,6 +6,7 @@
 #include "AltitudeSettings.h"
 #include "VerticalSpeedSettings.h"
 #include "IOExpander.h"
+#include "esp_task_wdt.h"
 
 class SerialCommands {
 
@@ -21,8 +22,9 @@ class SerialCommands {
   }
 
   void serialLoop() {
+    esp_task_wdt_delete(NULL);
     for (;;) {
-      vTaskDelay(pdMS_TO_TICKS(10));
+      vTaskDelay(pdMS_TO_TICKS(50));
       if (Serial.available() > 0) {
         String commandType = Serial.readStringUntil(' ');
         if (commandType == "H") {
