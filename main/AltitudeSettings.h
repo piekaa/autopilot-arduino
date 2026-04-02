@@ -23,8 +23,10 @@ public:
   }
 
   virtual void sendToGame() {
-    Serial.print("A ");
-    Serial.println(value);
+    TCPSender* sender = TCPSender::getInstance();
+    if (sender) {
+      sender->sendLine("A " + String(value));
+    }
   }
 
   void altitudeOn() {

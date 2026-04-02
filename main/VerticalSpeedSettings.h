@@ -20,8 +20,10 @@ public:
   }
 
   virtual void sendToGame() {
-    Serial.print("VS ");
-    Serial.println(value);
+    TCPSender* sender = TCPSender::getInstance();
+    if (sender) {
+      sender->sendLine("VS " + String(value));
+    }
   }
 
   void vnavOn() {

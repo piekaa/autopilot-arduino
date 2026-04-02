@@ -1,12 +1,13 @@
 #include <Wire.h>
 #include <SimpleFOC.h>
 #include <SparkFun_TMAG5273_Arduino_Library.h>
+#include <WiFi.h>
 #include "KnobManager.h"
 #include "IC2Multiplexer.h"
-#include "SerialCommands.h"
+#include "TCPCommands.h"
 #include "IOExpander.h"
 
-SerialCommands* serialCommands;
+TCPCommands* tcpCommands;
 KnobManager* knobManager;
 IOExpander* ioExpander;
 
@@ -39,31 +40,52 @@ void setup() {
 
   // Configure pin 8 (PB0) as button input with pullup
   ioExpander->configurePinAsInput(12, []() {
-    Serial.println("AP_HEADING TOGGLE");
+    TCPSender* sender = TCPSender::getInstance();
+    if (sender) {
+      sender->sendLine("AP_HEADING TOGGLE");
+    }
   });
 
   ioExpander->configurePinAsInput(13, []() {
-    Serial.println("AP_SPEED TOGGLE");
+    TCPSender* sender = TCPSender::getInstance();
+    if (sender) {
+      sender->sendLine("AP_SPEED TOGGLE");
+    }
   });
 
   ioExpander->configurePinAsInput(14, []() {
-    Serial.println("AP_ALTITUDE TOGGLE");
+    TCPSender* sender = TCPSender::getInstance();
+    if (sender) {
+      sender->sendLine("AP_ALTITUDE TOGGLE");
+    }
   });
 
   ioExpander->configurePinAsInput(15, []() {
-    Serial.println("AP_VS TOGGLE");
+    TCPSender* sender = TCPSender::getInstance();
+    if (sender) {
+      sender->sendLine("AP_VS TOGGLE");
+    }
   });
 
   ioExpander->configurePinAsInput(0, []() {
-    Serial.println("AP_VNAV TOGGLE");
+    TCPSender* sender = TCPSender::getInstance();
+    if (sender) {
+      sender->sendLine("AP_VNAV TOGGLE");
+    }
   });
 
   ioExpander->configurePinAsInput(1, []() {
-    Serial.println("AP TOGGLE");
+    TCPSender* sender = TCPSender::getInstance();
+    if (sender) {
+      sender->sendLine("AP TOGGLE");
+    }
   });
 
   ioExpander->configurePinAsInput(2, []() {
-    Serial.println("AP_LNAV TOGGLE");
+    TCPSender* sender = TCPSender::getInstance();
+    if (sender) {
+      sender->sendLine("AP_LNAV TOGGLE");
+    }
   });
 
   ioExpander->configurePinAsInput(3, [knobManager]() {
@@ -80,7 +102,7 @@ void setup() {
 
 
   // displays = new AutopilotDisplays(ic2Multiplexer);
-  serialCommands = new SerialCommands(headingSetting, speedSettings, altitudeSettings, verticalSpeedSettings, ioExpander);
+  tcpCommands = new TCPCommands(headingSetting, speedSettings, altitudeSettings, verticalSpeedSettings, ioExpander);
 
 }
 

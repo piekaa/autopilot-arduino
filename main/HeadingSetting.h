@@ -25,8 +25,10 @@ public:
   }
 
   virtual void sendToGame() {
-    Serial.print("H ");
-    Serial.println(value);
+    TCPSender* sender = TCPSender::getInstance();
+    if (sender) {
+      sender->sendLine("H " + String(value));
+    }
   }
 
   void headingOn() {

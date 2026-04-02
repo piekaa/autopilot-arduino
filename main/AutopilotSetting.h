@@ -2,6 +2,7 @@
 #define AUTOPILOT_SETTING_H
 
 #include <Display.h>
+#include "TCPSender.h"
 
 class AutopilotSetting {
   

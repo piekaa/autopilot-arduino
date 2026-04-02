@@ -26,8 +26,10 @@ public:
   }
 
   virtual void sendToGame() {
-    Serial.print("S ");
-    Serial.println(value);
+    TCPSender* sender = TCPSender::getInstance();
+    if (sender) {
+      sender->sendLine("S " + String(value));
+    }
   }
 
   void speedOn() {
