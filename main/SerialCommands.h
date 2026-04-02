@@ -120,7 +120,6 @@ class SerialCommands {
   }
 
   void serialLoop() {
-    esp_task_wdt_delete(NULL);
     for (;;) {
       vTaskDelay(pdMS_TO_TICKS(10));
 

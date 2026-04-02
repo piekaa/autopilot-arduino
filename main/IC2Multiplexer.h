@@ -10,9 +10,9 @@ public:
     // Create the I2C mutex
     i2cMutex = xSemaphoreCreateMutex();
     if (i2cMutex == NULL) {
-      Serial.println("FATAL: Failed to create I2C mutex in I2CMultiplexer!");
+      Serial.println("X FATAL: Failed to create I2C mutex in I2CMultiplexer!");
     } else {
-      Serial.println("I2C mutex created successfully in I2CMultiplexer");
+      Serial.println("X I2C mutex created successfully in I2CMultiplexer");
     }
 
     Wire1.begin(15, 27); // SDA, SCL
