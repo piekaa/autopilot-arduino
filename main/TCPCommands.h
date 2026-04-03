@@ -127,6 +127,14 @@ class TCPCommands {
       }
       return;
     }
+
+    if(commandType == "PING") {
+      TCPSender* sender = TCPSender::getInstance();
+      if (sender) {
+        sender->sendLine("PONG PONG");
+      }
+      return;
+    }
   }
 
   void tcpLoop() {
