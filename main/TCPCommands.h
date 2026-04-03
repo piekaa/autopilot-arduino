@@ -137,6 +137,25 @@ class TCPCommands {
     }
   }
 
+  void ensureWiFiConnected() {
+    if (WiFi.status() == WL_CONNECTED) {
+      return;
+    }
+
+    Serial.println("X WiFi disconnected, reconnecting...");
+    WiFi.disconnect();
+    WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+
+    while (WiFi.status() != WL_CONNECTED) {
+      vTaskDelay(pdMS_TO_TICKS(500));
+      Serial.print("X .");
+    }
+
+    Serial.println();
+    Serial.print("X WiFi reconnected! IP: ");
+    Serial.println(WiFi.localIP());
+  }
+
   void tcpLoop() {
     // Wait for WiFi to be initialized and connected
     vTaskDelay(pdMS_TO_TICKS(2000));
@@ -146,6 +165,9 @@ class TCPCommands {
 
     for (;;) {
       vTaskDelay(pdMS_TO_TICKS(10));
+
+      // Check and reconnect WiFi if needed
+      ensureWiFiConnected();
 
       if (sender->isConnected()) {
         while (client->available() > 0) {
@@ -189,21 +211,14 @@ public:
     Serial.println("X Connecting to WiFi...");
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
-    int attempts = 0;
-    while (WiFi.status() != WL_CONNECTED && attempts < 20) {
+    while (WiFi.status() != WL_CONNECTED) {
       vTaskDelay(pdMS_TO_TICKS(500));
       Serial.print("X .");
-      attempts++;
     }
 
-    if (WiFi.status() == WL_CONNECTED) {
-      Serial.println();
-      Serial.print("X WiFi connected! IP: ");
-      Serial.println(WiFi.localIP());
-    } else {
-      Serial.println();
-      Serial.println("X WiFi connection failed!");
-    }
+    Serial.println();
+    Serial.print("X WiFi connected! IP: ");
+    Serial.println(WiFi.localIP());
 
     // Initialize TCP sender
     TCPSender::initialize(SERVER_IP, SERVER_PORT);
