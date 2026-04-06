@@ -55,6 +55,11 @@ class SerialCommands {
       return;
     }
 
+    if (commandType == "GV") {
+       speedSettings->setGroundSpeed(value.toInt());
+      return;
+    }
+
     if (commandType == "AP") {
       if(value == "ON") {
         ioExpander->setLED(5, true);
@@ -91,14 +96,14 @@ class SerialCommands {
       return;
     }
 
-    if(commandType == "AP_SPEED") {
-      if(value == "ON") {
-        speedSettings->speedOn();
-      } else if(value == "OFF") {
-        speedSettings->speedOff();
-      }
-      return;
-    }
+    // if(commandType == "AP_SPEED") {
+    //   if(value == "ON") {
+    //     speedSettings->speedOn();
+    //   } else if(value == "OFF") {
+    //     speedSettings->speedOff();
+    //   }
+    //   return;
+    // }
 
     if(commandType == "AP_ALTITUDE") {
       if(value == "ON") {

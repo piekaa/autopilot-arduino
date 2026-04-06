@@ -32,12 +32,13 @@ public:
     }
   }
 
-  void speedOn() {
-    display->setBottomLeftIndicator("SPD");
-  }
+  void setGroundSpeed(int speed) {
+	if(speed < 0) {
+		display->clearBottomLeftIndicator();
+	} else {
+		display->setBottomLeftIndicator(String(speed));
+	}
 
-  void speedOff() {
-    display->clearBottomLeftIndicator();
   }
 };
 

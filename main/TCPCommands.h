@@ -11,7 +11,7 @@
 #include "esp_task_wdt.h"
 
 // WiFi credentials - change these to your network
-const char* WIFI_SSID = "iwaniuk";
+const char* WIFI_SSID = "biuro";
 const char* WIFI_PASSWORD = "aaaa1234";
 
 // Server connection settings
@@ -65,6 +65,11 @@ class TCPCommands {
       return;
     }
 
+     if (commandType == "GV") {
+      speedSettings->setGroundSpeed(value.toInt());
+      return;
+    }
+
     if (commandType == "AP") {
       if(value == "ON") {
         ioExpander->setLED(5, true);
@@ -101,14 +106,14 @@ class TCPCommands {
       return;
     }
 
-    if(commandType == "AP_SPEED") {
-      if(value == "ON") {
-        speedSettings->speedOn();
-      } else if(value == "OFF") {
-        speedSettings->speedOff();
-      }
-      return;
-    }
+    // if(commandType == "AP_SPEED") {
+    //   if(value == "ON") {
+    //     speedSettings->speedOn();
+    //   } else if(value == "OFF") {
+    //     speedSettings->speedOff();
+    //   }
+    //   return;
+    // }
 
     if(commandType == "AP_ALTITUDE") {
       if(value == "ON") {
