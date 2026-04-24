@@ -5,7 +5,7 @@
 #include "TCPSender.h"
 
 class AutopilotSetting {
-  
+
   volatile int previousValue;
 
   volatile bool active = false;
@@ -84,7 +84,7 @@ public:
   }
 
   void setValue(int value) {
-    if(lock > 0) {
+    if (lock > 0) {
       return;
     }
     this->value = value;
