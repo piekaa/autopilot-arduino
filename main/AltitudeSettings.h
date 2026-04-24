@@ -22,6 +22,10 @@ public:
     }
   }
 
+  virtual bool isAtMinimum() {
+    return value <= 0;
+  }
+
   virtual void sendToGame() {
     TCPSender* sender = TCPSender::getInstance();
     if (sender) {

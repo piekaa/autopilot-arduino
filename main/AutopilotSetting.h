@@ -71,6 +71,14 @@ public:
     lock = 10;
   }
 
+  virtual bool isAtMinimum() {
+    return false;
+  }
+
+  virtual bool isAtMaximum() {
+    return false;
+  }
+
   virtual void sendToGame() {
     Serial.println("X [sendToGame] Implement me in child class");
   }
@@ -88,6 +96,10 @@ public:
       return;
     }
     this->value = value;
+  }
+
+  int getValue() {
+    return value;
   }
 };
 

@@ -65,42 +65,42 @@ class TCPCommands {
       return;
     }
 
-     if (commandType == "GV") {
+    if (commandType == "GV") {
       speedSettings->setGroundSpeed(value.toInt());
       return;
     }
 
     if (commandType == "AP") {
-      if(value == "ON") {
+      if (value == "ON") {
         ioExpander->setLED(5, true);
-      } else if(value == "OFF") {
+      } else if (value == "OFF") {
         ioExpander->setLED(5, false);
       }
       return;
     }
 
-    if(commandType == "AP_HEADING") {
-      if(value == "ON") {
+    if (commandType == "AP_HEADING") {
+      if (value == "ON") {
         headingSetting->headingOn();
-      } else if(value == "OFF") {
+      } else if (value == "OFF") {
         headingSetting->headingOff();
       }
       return;
     }
 
-    if(commandType == "AP_LNAV") {
-      if(value == "ON") {
+    if (commandType == "AP_LNAV") {
+      if (value == "ON") {
         headingSetting->navOn();
-      } else if(value == "OFF") {
+      } else if (value == "OFF") {
         headingSetting->navOff();
       }
       return;
     }
 
-    if(commandType == "AP_VNAV") {
-      if(value == "ON") {
+    if (commandType == "AP_VNAV") {
+      if (value == "ON") {
         verticalSpeedSettings->vnavOn();
-      } else if(value == "OFF") {
+      } else if (value == "OFF") {
         verticalSpeedSettings->vnavOff();
       }
       return;
@@ -115,25 +115,43 @@ class TCPCommands {
     //   return;
     // }
 
-    if(commandType == "AP_ALTITUDE") {
-      if(value == "ON") {
+    if (commandType == "AP_ALTITUDE") {
+      if (value == "ON") {
         altitudeSettings->altitudeOn();
-      } else if(value == "OFF") {
+      } else if (value == "OFF") {
         altitudeSettings->altitudeOff();
       }
       return;
     }
 
-    if(commandType == "AP_VS") {
-      if(value == "ON") {
+    if (commandType == "AP_VS") {
+      if (value == "ON") {
         verticalSpeedSettings->vsOn();
-      } else if(value == "OFF") {
+      } else if (value == "OFF") {
         verticalSpeedSettings->vsOff();
       }
       return;
     }
 
-    if(commandType == "PING") {
+    if (commandType == "AP_MIN_SPEED") {
+      if (speedSettings->getValue() < value.toInt()) {
+        speedSettings->setValue(value.toInt());
+      }
+
+      speedSettings->minValue = value.toInt();
+      return;
+    }
+
+    if (commandType == "AP_MAX_SPEED") {
+      if (speedSettings->getValue() > value.toInt()) {
+        speedSettings->setValue(value.toInt());
+      }
+
+      speedSettings->maxValue = value.toInt();
+      return;
+    }
+
+    if (commandType == "PING") {
       TCPSender* sender = TCPSender::getInstance();
       if (sender) {
         sender->sendLine("PONG PONG");

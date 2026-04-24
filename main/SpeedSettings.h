@@ -6,23 +6,34 @@
 
 class SpeedSettings : public AutopilotSetting {
 public:
+
+  int minValue = 0;
+  int maxValue = 350;
+
   SpeedSettings(Display* display)
-    : AutopilotSetting(display, "SpeedSettingTask") 
-  {}
+    : AutopilotSetting(display, "SpeedSettingTask") {}
 
   virtual void plus() {
     AutopilotSetting::plus();
     value++;
-    if(value > 450) {
+    if (value > 450) {
       value = 450;
     }
   }
   virtual void minus() {
     AutopilotSetting::minus();
     value--;
-    if(value < 0) {
+    if (value < 0) {
       value = 0;
     }
+  }
+
+  virtual bool isAtMinimum() {
+    return value <= minValue;
+  }
+
+  virtual bool isAtMaximum() {
+    return value >= maxValue;
   }
 
   virtual void sendToGame() {
@@ -33,12 +44,11 @@ public:
   }
 
   void setGroundSpeed(int speed) {
-	if(speed < 0) {
-		display->clearBottomLeftIndicator();
-	} else {
-		display->setBottomLeftIndicator(String(speed));
-	}
-
+    if (speed < 0) {
+      display->clearBottomLeftIndicator();
+    } else {
+      display->setBottomLeftIndicator(String(speed));
+    }
   }
 };
 

@@ -13,10 +13,10 @@ private:
   float step;
   String name;
   float halfStep;
-  inline static float targetAngle = 3; 
+  inline static float targetAngle = 3;
 
 public:
-  
+
   HapticKnob(String name, MotorDriver* motorDriver, float maxVolt, float stepSize, AutopilotSetting* autopilotSetting) {
     this->motorDriver = motorDriver;
     this->autopilotSetting = autopilotSetting;
@@ -31,34 +31,46 @@ public:
 
     float angle = motorDriver->shaftAngle();
 
-    if(abs(targetAngle - angle) > halfStep) {
-      if(targetAngle - angle < 0) {
-        targetAngle += step;
-        this->autopilotSetting->minus();
+    float tempMaxVoltage = maxVoltage;
+
+    float angleDiff = abs(targetAngle - angle);
+
+    if (angleDiff > halfStep) {
+      if (targetAngle - angle < 0) {
+        if (!autopilotSetting->isAtMinimum()) {
+          targetAngle += step;
+          this->autopilotSetting->minus();
+        } else {
+          tempMaxVoltage *= 3;
+        }
       } else {
-        targetAngle -= step;
-        this->autopilotSetting->plus();
+        if (!autopilotSetting->isAtMaximum()) {
+          targetAngle -= step;
+          this->autopilotSetting->plus();
+        } else {
+          tempMaxVoltage *= 3;
+        }
       }
     }
 
     float distance = targetAngle - angle;
 
-    if(distance > halfStep) {
+    if (distance > halfStep) {
       distance = halfStep;
     }
-    if(distance < -halfStep) {
+    if (distance < -halfStep) {
       distance = -halfStep;
     }
 
     float relativeDistance = distance / halfStep;
 
-    if(relativeDistance < 0) {
+    if (relativeDistance < 0) {
       relativeDistance = relativeDistance * -relativeDistance;
     } else {
       relativeDistance = relativeDistance * relativeDistance;
     }
 
-    float targetVoltage = maxVoltage * relativeDistance;
+    float targetVoltage = tempMaxVoltage * relativeDistance;
 
     // Apply voltage (SimpleFOC will handle limiting via motor.voltage_limit)
     motorDriver->move(targetVoltage);
