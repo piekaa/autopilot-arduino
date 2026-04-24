@@ -133,24 +133,6 @@ class TCPCommands {
       return;
     }
 
-    if (commandType == "AP_MIN_SPEED") {
-      if (speedSettings->getValue() < value.toInt()) {
-        speedSettings->setValue(value.toInt());
-      }
-
-      speedSettings->minValue = value.toInt();
-      return;
-    }
-
-    if (commandType == "AP_MAX_SPEED") {
-      if (speedSettings->getValue() > value.toInt()) {
-        speedSettings->setValue(value.toInt());
-      }
-
-      speedSettings->maxValue = value.toInt();
-      return;
-    }
-
     if (commandType == "PING") {
       TCPSender* sender = TCPSender::getInstance();
       if (sender) {

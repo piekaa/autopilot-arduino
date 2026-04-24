@@ -8,7 +8,7 @@ class SpeedSettings : public AutopilotSetting {
 public:
 
   int minValue = 0;
-  int maxValue = 350;
+  int maxValue = 420;
 
   SpeedSettings(Display* display)
     : AutopilotSetting(display, "SpeedSettingTask") {}
